@@ -119,6 +119,7 @@ To be used with `overleaf-cookies'.  The Firefox folder should be
 located at `~/.mozilla/firefox/'.  If PROFILE is provided, choose this
 profile.  Otherwise prompt."
   (lambda ()
+
     (setopt overleaf-cache-cookies nil)
     (if (sqlite-available-p)
         (let* ((profile-blocks
@@ -126,11 +127,10 @@ profile.  Otherwise prompt."
                   (insert-file-contents (expand-file-name (concat firefox-folder "/profiles.ini")))
                   (goto-char (point-min))
                   (let ((matches))
-                    (while (re-search-forward "\\[.*\\]\\(\\(?:.\\|\n\\)+?\\)\\[" (point-max) t)
+                    (while (re-search-forward "^\\[.+\\]\n\\(\\(?:.*\n?\\)*?\\)\\(?:^\\[\\|$\\)" (point-max) t)
                       (backward-char)
                       (push (match-string 1) matches))
                     matches)))
-
                (profiles
                 (remq 'nil
                       (mapcar (lambda (block)
